@@ -646,7 +646,7 @@ dialog.sheet::backdrop {
   border: 0;
   border-radius: 999px;
   padding: 0.45rem 0.55rem 0.45rem 1rem;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
@@ -657,6 +657,10 @@ dialog.sheet::backdrop {
   cursor: pointer;
 }
 
+.toast:not([hidden]) {
+  display: flex;
+}
+
 .toast #toast-message {
   flex: 1;
   min-width: 0;
@@ -665,13 +669,17 @@ dialog.sheet::backdrop {
 .toast #toast-action {
   flex: none;
   min-height: 2.4rem;
-  display: grid;
+  display: none;
   place-items: center;
   padding: 0 0.95rem;
   border-radius: 999px;
   background: var(--accent);
   color: var(--accent-ink);
   font-weight: 800;
+}
+
+.toast #toast-action:not([hidden]) {
+  display: grid;
 }
 
 body.toast-open .fab {
