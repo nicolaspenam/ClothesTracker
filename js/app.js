@@ -1,4 +1,4 @@
-import { TYPES, plural, sortByName, todayISO, typeShortLabel } from "./constants.js";
+import { TYPES, plural, sortByName, todayISO } from "./constants.js";
 import { parseCsv, serializeItems } from "./csv.js";
 import { Store } from "./store.js";
 
@@ -227,7 +227,7 @@ function render() {
     return;
   }
 
-  if (state.filter === "all" && !state.query) {
+  if (state.filter === "all") {
     const groups = TYPES.map((type) => {
       const group = items.filter((item) => item.type === type.id);
       if (group.length === 0) return "";
@@ -237,8 +237,7 @@ function render() {
     return;
   }
 
-  listEl.innerHTML =
-    listLegend() + items.map((item) => cardHtml(item, { showType: true })).join("");
+  listEl.innerHTML = listLegend() + items.map((item) => cardHtml(item)).join("");
 }
 
 function listLegend() {
@@ -263,14 +262,10 @@ function emptyState() {
   return `<div class="empty"><h2>Nothing matches</h2><p>Try another type or search.</p></div>`;
 }
 
-function cardHtml(item, { showType = false } = {}) {
-  const badge = showType
-    ? `<span class="badge badge-${item.type}">${escapeHtml(typeShortLabel(item.type))}</span>`
-    : "";
+function cardHtml(item) {
   return `
     <article class="card" data-id="${escapeHtml(item.id)}">
       <button class="card-name" type="button" data-action="edit" title="Edit details">${escapeHtml(item.name)}</button>
-      ${badge}
       <div class="card-counts">
         <span class="wear-count" title="Wears since wash">${item.usesSinceWash}</span>
         <span class="lifetime" title="Lifetime wears">${item.totalUses}</span>

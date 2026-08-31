@@ -12,9 +12,6 @@
   --accent-hover: #174536;
   --danger: #8f2d2d;
   --danger-bg: #f4e0d8;
-  --pants: #355c7d;
-  --shorts: #1c7a6c;
-  --sweaters: #a14a38;
   --shadow: 0 12px 32px rgba(48, 32, 12, 0.1);
   --radius: 1.15rem;
   --tap: 2.75rem;
@@ -38,9 +35,6 @@
     --accent-hover: #97d0b4;
     --danger: #f0a194;
     --danger-bg: #3a2420;
-    --pants: #8eb4d6;
-    --shorts: #73c7b8;
-    --sweaters: #e09a88;
     --shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   }
 }
@@ -233,10 +227,6 @@ a {
   min-height: 2.7rem;
 }
 
-.card:has(.badge) {
-  grid-template-columns: minmax(0, 1fr) auto 4.4rem 7.1rem;
-}
-
 .card-name {
   margin: 0;
   padding: 0.12rem 0;
@@ -249,30 +239,6 @@ a {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.badge {
-  border-radius: 999px;
-  padding: 0.12rem 0.4rem;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  flex: none;
-}
-
-.badge-pants {
-  background: color-mix(in srgb, var(--pants) 18%, var(--surface));
-  color: var(--pants);
-}
-
-.badge-shorts {
-  background: color-mix(in srgb, var(--shorts) 18%, var(--surface));
-  color: var(--shorts);
-}
-
-.badge-sweaters {
-  background: color-mix(in srgb, var(--sweaters) 18%, var(--surface));
-  color: var(--sweaters);
 }
 
 .card-counts {
