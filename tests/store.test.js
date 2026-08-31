@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { STORAGE_KEY } from "../js/constants.js";
+import { STORAGE_KEY, sortByName } from "../js/constants.js";
 import {
   Store,
   decrementUse,
@@ -86,5 +86,37 @@ describe("Store", () => {
     store.replaceAll([{ name: "New shorts", type: "shorts" }]);
     assert.equal(store.list().length, 1);
     assert.equal(store.list()[0].name, "New shorts");
+  });
+
+  it("can restore wears since wash without changing the lifetime total", () => {
+    const store = new Store(memoryStorage());
+    const added = store.add({
+      name: "Jeans",
+      type: "pants",
+      usesSinceWash: 3,
+      totalUses: 12,
+    });
+    store.resetWash(added.id);
+    store.update(added.id, { usesSinceWash: 3 });
+    const item = store.get(added.id);
+    assert.equal(item.usesSinceWash, 3);
+    assert.equal(item.totalUses, 12);
+  });
+});
+
+describe("sortByName", () => {
+  it("orders clothing alphabetically, ignoring case", () => {
+    const sorted = sortByName([
+      { name: "olive shorts" },
+      { name: "Navy chinos" },
+      { name: "cream sweater" },
+      { name: "Black jeans" },
+    ]).map((item) => item.name);
+    assert.deepEqual(sorted, [
+      "Black jeans",
+      "cream sweater",
+      "Navy chinos",
+      "olive shorts",
+    ]);
   });
 });

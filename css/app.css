@@ -494,7 +494,7 @@ dialog.sheet::backdrop {
   color: var(--ink-soft);
 }
 
-.field input,
+.field input:not([type="radio"]):not([type="checkbox"]):not([type="file"]),
 .field textarea {
   width: 100%;
   min-height: var(--tap);
@@ -505,12 +505,38 @@ dialog.sheet::backdrop {
   font-size: 1rem;
 }
 
+.field input[type="file"] {
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+.choice-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.choice-list label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.choice-list input {
+  width: auto;
+  min-height: 1.2rem;
+  margin-top: 0.15rem;
+  flex: none;
+  accent-color: var(--accent);
+}
+
 .field textarea {
   min-height: 8rem;
   resize: vertical;
 }
 
-.field input:focus,
+.field input:not([type="radio"]):not([type="checkbox"]):not([type="file"]):focus,
 .field textarea:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -602,26 +628,40 @@ dialog.sheet::backdrop {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(5rem + var(--safe-bottom));
+  bottom: calc(5.75rem + var(--safe-bottom));
   transform: translateX(-50%);
   width: min(36rem, calc(100% - 1.5rem));
   background: var(--ink);
   color: var(--surface);
   border-radius: 0.9rem;
-  padding: 0.75rem 0.85rem;
+  padding: 0.55rem 0.55rem 0.55rem 0.9rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  z-index: 20;
+  z-index: 30;
   box-shadow: var(--shadow);
 }
 
+.toast span {
+  flex: 1;
+  min-width: 0;
+}
+
 .toast button {
-  background: transparent;
+  flex: none;
+  min-height: 2.6rem;
+  padding: 0 0.9rem;
   border: 0;
-  color: var(--accent);
+  border-radius: 0.7rem;
+  background: var(--accent);
+  color: var(--accent-ink);
   font-weight: 800;
+}
+
+body.toast-open .fab {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .install-banner {

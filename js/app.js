@@ -1,4 +1,4 @@
-import { TYPES, formatDate, plural, todayISO, typeShortLabel } from "./constants.js";
+import { TYPES, formatDate, plural, sortByName, todayISO, typeShortLabel } from "./constants.js";
 import { parseCsv, serializeItems } from "./csv.js";
 import { Store } from "./store.js";
 
@@ -135,7 +135,7 @@ listEl.addEventListener("click", (event) => {
     if (!before || before.usesSinceWash === 0) return;
     store.resetWash(id);
     render();
-    showToast(`${before.name} reset to 0 wears since wash.`, {
+    showToast("Reset to 0 since wash.", {
       label: "Undo",
       onAction: () => {
         store.update(id, { usesSinceWash: before.usesSinceWash });
@@ -232,11 +232,13 @@ function render() {
 
 function visibleItems() {
   const query = state.query;
-  return store.list().filter((item) => {
-    if (state.filter !== "all" && item.type !== state.filter) return false;
-    if (query && !item.name.toLowerCase().includes(query)) return false;
-    return true;
-  });
+  return sortByName(
+    store.list().filter((item) => {
+      if (state.filter !== "all" && item.type !== state.filter) return false;
+      if (query && !item.name.toLowerCase().includes(query)) return false;
+      return true;
+    }),
+  );
 }
 
 function emptyState() {
@@ -357,16 +359,23 @@ function showToast(message, action) {
   toastAction.hidden = !action;
   toastAction.textContent = action?.label || "Undo";
   toastEl.hidden = false;
-  state.toastTimer = window.setTimeout(() => {
-    toastEl.hidden = true;
-    state.undo = null;
-  }, 5000);
+  document.body.classList.toggle("toast-open", true);
+  state.toastTimer = window.setTimeout(hideToast, 6000);
 }
 
-toastAction.addEventListener("click", () => {
-  state.undo?.();
+function hideToast() {
+  clearTimeout(state.toastTimer);
   toastEl.hidden = true;
   state.undo = null;
+  document.body.classList.remove("toast-open");
+}
+
+toastAction.addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  const undo = state.undo;
+  hideToast();
+  undo?.();
 });
 
 function vibrate() {

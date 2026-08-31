@@ -161,14 +161,16 @@
             </label>
             <fieldset class="field">
               <legend>When importing</legend>
-              <label
-                ><input type="radio" name="import-mode" value="replace" checked />
-                Replace everything</label
-              >
-              <label
-                ><input type="radio" name="import-mode" value="merge" /> Update
-                matching Ids, add the rest</label
-              >
+              <div class="choice-list">
+                <label>
+                  <input type="radio" name="import-mode" value="replace" checked />
+                  Replace everything
+                </label>
+                <label>
+                  <input type="radio" name="import-mode" value="merge" />
+                  Update matching Ids, add the rest
+                </label>
+              </div>
             </fieldset>
             <p class="preview" id="import-preview"></p>
             <div class="row-actions">

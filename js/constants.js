@@ -48,3 +48,9 @@ export function formatDate(iso) {
 export function plural(count, singular, pluralForm = `${singular}s`) {
   return count === 1 ? singular : pluralForm;
 }
+
+export function sortByName(items) {
+  return [...items].sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" }),
+  );
+}
