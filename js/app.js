@@ -376,12 +376,14 @@ function hideToast() {
   document.body.classList.remove("toast-open");
 }
 
-toastEl.addEventListener("click", (event) => {
+toastEl.addEventListener("pointerup", (event) => {
   event.preventDefault();
   event.stopPropagation();
   const undo = state.undo;
-  hideToast();
-  undo?.();
+  window.setTimeout(() => {
+    hideToast();
+    undo?.();
+  }, 280);
 });
 
 function vibrate() {

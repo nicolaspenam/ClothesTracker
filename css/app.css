@@ -637,7 +637,7 @@ dialog.sheet::backdrop {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(1rem + var(--safe-bottom));
+  bottom: calc(5.35rem + var(--safe-bottom));
   transform: translateX(-50%);
   width: min(36rem, calc(100% - 1.5rem));
   min-height: 3.25rem;
@@ -655,6 +655,7 @@ dialog.sheet::backdrop {
   font: inherit;
   text-align: left;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .toast:not([hidden]) {
@@ -683,7 +684,6 @@ dialog.sheet::backdrop {
 }
 
 body.toast-open .fab {
-  visibility: hidden;
   pointer-events: none;
 }
 
