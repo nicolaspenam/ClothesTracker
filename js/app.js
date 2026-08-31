@@ -73,8 +73,8 @@ document.getElementById("open-data").addEventListener("click", () => {
   refreshShareVisibility();
   dataDialog.showModal();
 });
-document.getElementById("close-data").addEventListener("click", () => dataDialog.close());
 document.getElementById("dismiss-data").addEventListener("click", () => dataDialog.close());
+document.getElementById("run-import").addEventListener("click", () => runImport());
 
 for (const dialog of [itemDialog, dataDialog]) {
   dialog.addEventListener("click", (event) => {
@@ -190,12 +190,12 @@ document.getElementById("import-file").addEventListener("change", async (event) 
 
 importText.addEventListener("input", updateImportPreview);
 
-document.getElementById("run-import").addEventListener("click", () => {
+function runImport() {
   const parsed = parseCsv(importText.value);
   if (parsed.items.length === 0) {
     importPreview.className = "preview error";
     importPreview.textContent = parsed.errors[0] || "No clothing rows found.";
-    return;
+    return false;
   }
   const mode = document.querySelector("input[name='import-mode']:checked")?.value;
   const snapshot = store.list();
@@ -214,7 +214,8 @@ document.getElementById("run-import").addEventListener("click", () => {
       render();
     },
   });
-});
+  return true;
+}
 
 store.subscribe(render);
 render();
@@ -375,7 +376,7 @@ function hideToast() {
   document.body.classList.remove("toast-open");
 }
 
-toastAction.addEventListener("click", (event) => {
+toastEl.addEventListener("click", (event) => {
   event.preventDefault();
   event.stopPropagation();
   const undo = state.undo;
