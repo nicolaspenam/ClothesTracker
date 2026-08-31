@@ -22,6 +22,7 @@ const state = {
   query: "",
   toastTimer: 0,
   undo: null,
+  undoBusy: false,
   deferredPrompt: null,
 };
 
@@ -356,30 +357,39 @@ async function copyText(text) {
 function showToast(message, action) {
   clearTimeout(state.toastTimer);
   state.undo = action?.onAction ?? null;
+  state.undoBusy = false;
   toastMessage.textContent = message;
   toastAction.hidden = !action;
   toastAction.textContent = action?.label || "Undo";
   toastEl.hidden = false;
   document.body.classList.toggle("toast-open", true);
-  state.toastTimer = window.setTimeout(hideToast, 6000);
+  state.toastTimer = window.setTimeout(hideToast, 10000);
 }
 
 function hideToast() {
   clearTimeout(state.toastTimer);
   toastEl.hidden = true;
   state.undo = null;
+  state.undoBusy = false;
   document.body.classList.remove("toast-open");
 }
 
-toastEl.addEventListener("pointerup", (event) => {
+function consumeUndo(event) {
   event.preventDefault();
   event.stopPropagation();
+  if (state.undoBusy || toastEl.hidden) return;
+  state.undoBusy = true;
   const undo = state.undo;
+  state.undo = null;
+  clearTimeout(state.toastTimer);
   window.setTimeout(() => {
     hideToast();
     undo?.();
   }, 280);
-});
+}
+
+toastEl.addEventListener("pointerup", consumeUndo);
+toastEl.addEventListener("click", consumeUndo);
 
 function vibrate() {
   navigator.vibrate?.(12);
