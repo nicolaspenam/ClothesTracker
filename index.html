@@ -24,10 +24,12 @@
   <body>
     <div class="app">
       <header class="topbar">
-        <div class="brand">
-          <h1>ClothesTracker</h1>
-          <p>Wears since the last wash, plus lifetime totals.</p>
-        </div>
+        <nav class="filters" aria-label="Clothing type">
+          <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="chip" type="button" data-filter="pants" aria-pressed="false">Pants</button>
+          <button class="chip" type="button" data-filter="shorts" aria-pressed="false">Shorts</button>
+          <button class="chip" type="button" data-filter="sweaters" aria-pressed="false">Sweaters</button>
+        </nav>
         <button class="icon-btn" id="open-data" type="button" aria-label="Import and export">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M8 17l4 4 4-4" />
@@ -42,15 +44,11 @@
           <strong>Install this app</strong>
           <p class="help">Add it to your Android home screen for one-tap access.</p>
         </div>
-        <button class="btn btn-primary" id="install-btn" type="button">Install</button>
+        <div class="row-actions">
+          <button class="btn btn-primary" id="install-btn" type="button">Install</button>
+          <button class="btn" id="dismiss-install" type="button">Dismiss</button>
+        </div>
       </div>
-
-      <nav class="filters" aria-label="Clothing type">
-        <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
-        <button class="chip" type="button" data-filter="pants" aria-pressed="false">Pants</button>
-        <button class="chip" type="button" data-filter="shorts" aria-pressed="false">Shorts</button>
-        <button class="chip" type="button" data-filter="sweaters" aria-pressed="false">Sweaters</button>
-      </nav>
 
       <label class="sr-only" for="search">Search clothes</label>
       <input class="search" id="search" type="search" placeholder="Search by name" />
@@ -174,6 +172,7 @@
             </fieldset>
             <p class="preview" id="import-preview"></p>
             <div class="row-actions">
+              <button class="btn" id="dismiss-data" type="button">Dismiss</button>
               <button class="btn btn-primary" id="run-import" type="button">
                 Import
               </button>

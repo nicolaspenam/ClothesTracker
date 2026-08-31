@@ -1,4 +1,4 @@
-import { TYPES, formatDate, plural, sortByName, todayISO, typeShortLabel } from "./constants.js";
+import { TYPES, plural, sortByName, todayISO, typeShortLabel } from "./constants.js";
 import { parseCsv, serializeItems } from "./csv.js";
 import { Store } from "./store.js";
 
@@ -33,6 +33,7 @@ if ("serviceWorker" in navigator) {
 
 window.addEventListener("beforeinstallprompt", (event) => {
   event.preventDefault();
+  if (localStorage.getItem("clothes-tracker:hide-install")) return;
   state.deferredPrompt = event;
   installBanner.classList.add("show");
 });
@@ -43,6 +44,12 @@ document.getElementById("install-btn").addEventListener("click", async () => {
   await state.deferredPrompt.userChoice;
   state.deferredPrompt = null;
   installBanner.classList.remove("show");
+});
+
+document.getElementById("dismiss-install").addEventListener("click", () => {
+  localStorage.setItem("clothes-tracker:hide-install", "1");
+  installBanner.classList.remove("show");
+  state.deferredPrompt = null;
 });
 
 document.querySelector(".filters").addEventListener("click", (event) => {
@@ -67,6 +74,7 @@ document.getElementById("open-data").addEventListener("click", () => {
   dataDialog.showModal();
 });
 document.getElementById("close-data").addEventListener("click", () => dataDialog.close());
+document.getElementById("dismiss-data").addEventListener("click", () => dataDialog.close());
 
 for (const dialog of [itemDialog, dataDialog]) {
   dialog.addEventListener("click", (event) => {
@@ -219,15 +227,21 @@ function render() {
   }
 
   if (state.filter === "all" && !state.query) {
-    listEl.innerHTML = TYPES.map((type) => {
+    const groups = TYPES.map((type) => {
       const group = items.filter((item) => item.type === type.id);
       if (group.length === 0) return "";
-      return `<h2 class="section">${escapeHtml(type.label)}</h2>${group.map(cardHtml).join("")}`;
+      return `<h2 class="section">${escapeHtml(type.label)}</h2>${group.map((item) => cardHtml(item)).join("")}`;
     }).join("");
+    listEl.innerHTML = listLegend() + groups;
     return;
   }
 
-  listEl.innerHTML = items.map(cardHtml).join("");
+  listEl.innerHTML =
+    listLegend() + items.map((item) => cardHtml(item, { showType: true })).join("");
+}
+
+function listLegend() {
+  return `<div class="list-legend" aria-hidden="true"><span>Name</span><span>Since / total</span></div>`;
 }
 
 function visibleItems() {
@@ -248,32 +262,23 @@ function emptyState() {
   return `<div class="empty"><h2>Nothing matches</h2><p>Try another type or search.</p></div>`;
 }
 
-function cardHtml(item) {
-  const first = item.firstUsed
-    ? `First used ${escapeHtml(formatDate(item.firstUsed))}`
-    : "No first-used date";
+function cardHtml(item, { showType = false } = {}) {
+  const badge = showType
+    ? `<span class="badge badge-${item.type}">${escapeHtml(typeShortLabel(item.type))}</span>`
+    : "";
   return `
     <article class="card" data-id="${escapeHtml(item.id)}">
-      <div class="card-head">
-        <div>
-          <h3 class="card-name">${escapeHtml(item.name)}</h3>
-          <p class="card-meta">${first}</p>
-        </div>
-        <span class="badge badge-${item.type}">${escapeHtml(typeShortLabel(item.type))}</span>
+      <button class="card-name" type="button" data-action="edit" title="Edit details">${escapeHtml(item.name)}</button>
+      ${badge}
+      <div class="card-counts">
+        <span class="wear-count" title="Wears since wash">${item.usesSinceWash}</span>
+        <span class="lifetime" title="Lifetime wears">${item.totalUses}</span>
       </div>
-      <div class="card-body">
-        <div class="wear">
-          <div class="wear-count">${item.usesSinceWash}</div>
-          <div class="wear-label">${plural(item.usesSinceWash, "wear")} since wash</div>
-          <div class="lifetime">Lifetime <strong>${item.totalUses}</strong> ${plural(item.totalUses, "wear")}</div>
-        </div>
-        <div class="actions">
-          <button class="btn btn-wash" type="button" data-action="wash" ${item.usesSinceWash === 0 ? "disabled" : ""}>Washed</button>
-          <button class="btn-minus" type="button" data-action="minus" aria-label="Minus one wear" ${item.usesSinceWash === 0 ? "disabled" : ""}>−</button>
-          <button class="btn-plus" type="button" data-action="plus" aria-label="Plus one wear">+</button>
-        </div>
+      <div class="actions">
+        <button class="btn btn-wash" type="button" data-action="wash" ${item.usesSinceWash === 0 ? "disabled" : ""}>Wash</button>
+        <button class="btn-minus" type="button" data-action="minus" aria-label="Minus one wear" ${item.usesSinceWash === 0 ? "disabled" : ""}>−</button>
+        <button class="btn-plus" type="button" data-action="plus" aria-label="Plus one wear">+</button>
       </div>
-      <button class="edit-link" type="button" data-action="edit">Edit details</button>
     </article>
   `;
 }
